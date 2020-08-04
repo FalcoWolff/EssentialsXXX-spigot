@@ -209,7 +209,7 @@ public interface DataExcecutor extends IdExcecutor{
 		}
 	
 		for(String i : data.keySet()) {
-				
+			
 			message = message.replaceAll("§" + i + suffix, data.get(i));
 				
 		}
