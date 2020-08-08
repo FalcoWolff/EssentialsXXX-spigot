@@ -125,7 +125,7 @@ public class EssentialsXXX extends JavaPlugin implements Listener, IdExcecutor{
 			idmysql = new MySql("com.mysql.jdbc.Driver",path, idconfig.getUser(), idconfig.getPw());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			System.out.println(prefix + " couldnt find mysql-classes"); 
+			System.out.println(prefix + " couldnt find mysql-classe"); 
 			disablejoin();
 		}
 		
@@ -137,6 +137,7 @@ public class EssentialsXXX extends JavaPlugin implements Listener, IdExcecutor{
 		}
 		
 		System.out.println("[" + name + "] mysql-status: " + idmysql.isconnect());
+		
 		
 		
 	}
