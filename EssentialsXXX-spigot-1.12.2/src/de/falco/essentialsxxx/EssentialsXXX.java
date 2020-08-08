@@ -138,34 +138,7 @@ public class EssentialsXXX extends JavaPlugin implements Listener, IdExcecutor{
 		
 		System.out.println("[" + name + "] mysql-status: " + idmysql.isconnect());
 		
-		//UUID uuid = getUUIDbyUsername("8a7bc16c89 fa46ff8510 7729986d72 3c");
-		UUID uuid = null;
-		try {
-			uuid = getUUIDbyUsername("505dc1c68e56471b919093c5d1435e94");
-			System.out.println("changed uuid " + uuid);
-		} catch (NotregisteredException e) {
-			e.printStackTrace();
-		}
 		
-		UserProfile u = null;
-		try {
-			u = getUserProfilebyuuid(uuid);
-			System.out.println("user " + u);
-			
-			System.out.println("firstname " + u.getFirstname());
-			System.out.println("lastname " + u.getLastname());
-			System.out.println("" + u.getTimeByUserName("KnockyYT"));
-		} catch (NotregisteredException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		try {
-			UserProfile uu = getUserProfilebyUsername("KnockyYT");
-			System.out.println("user2 " + uu);
-		} catch (NotregisteredException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private void disablejoin() {
