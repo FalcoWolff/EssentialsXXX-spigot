@@ -1,0 +1,7 @@
+main: de.falco.essentialsxxx.EssentialsXXX
+name: essentialsXXX
+version: 1.12.2
+author: Sweet_Phoenix
+loadbefore: [Vault]
+softdepend: [Vault]
+depend: [Vault]

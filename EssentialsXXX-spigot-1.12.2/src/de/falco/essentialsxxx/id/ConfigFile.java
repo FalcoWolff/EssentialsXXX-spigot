@@ -1,8 +1,5 @@
 package de.falco.essentialsxxx.id;
 
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import de.falco.essentialsxxx.EssentialsXXX;
 import de.falco.essentialsxxx.util.ConfigAdapter;
 

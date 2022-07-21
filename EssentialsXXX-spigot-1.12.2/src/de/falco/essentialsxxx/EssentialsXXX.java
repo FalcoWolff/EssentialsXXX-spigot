@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import de.falco.essentialsxxx.data.DataManager;
 import de.falco.essentialsxxx.exceptions.NoPexException;
 import de.falco.essentialsxxx.id.IdExcecutor;
 import de.falco.essentialsxxx.id.NotregisteredException;
@@ -34,17 +35,8 @@ public class EssentialsXXX extends JavaPlugin implements Listener, IdExcecutor{
 	private String version;
 	private String author;
 	
-	//Commands
-	//private Create create;
-	//private Copy copy;
-	//private Info info;
-	
 	//Config
 	private ConfigFile EssentialsXXXconfig;
-	
-	//config fields
-	private Map<String,Map<String,String>> EssentialsXXXgroups;
-	private Map<UUID,Map<String,String>> EssentialsXXXplayer;
 	
 	//error message fields
 	private String EssentialsXXXnopex;
@@ -62,6 +54,8 @@ public class EssentialsXXX extends JavaPlugin implements Listener, IdExcecutor{
 	//disable join
 	private boolean join = true;
 	
+	//DataManager
+	private DataManager manager;
 	
 	public void onEnable() {
 		
@@ -98,7 +92,15 @@ public class EssentialsXXX extends JavaPlugin implements Listener, IdExcecutor{
 			return;
 		}
 		
-		loadfields();
+		
+		//load error messages
+		this.EssentialsXXXnotaplayer = EssentialsXXXconfig.getConfig().getString("config.message.error.notaplayer");
+		this.EssentialsXXXnotonline = EssentialsXXXconfig.getConfig().getString("config.message.error.notonline");
+		this.EssentialsXXXsyntax = EssentialsXXXconfig.getConfig().getString("config.message.error.syntax");
+		this.EssentialsXXXnopex = EssentialsXXXconfig.getConfig().getString("config.message.error.nopex");
+		
+		manager = new DataManager(this);
+		manager.loadfields();
 		
 		//vault
 		if(!this.getServer().getPluginManager().isPluginEnabled("Vault")) {
@@ -186,97 +188,7 @@ public class EssentialsXXX extends JavaPlugin implements Listener, IdExcecutor{
         }
         return (permission != null);
     }
-	
-	//methode to load the config
-	private void loadfields() {
-		
-		//load groups
-		this.EssentialsXXXgroups = new LinkedHashMap<>();
-		
-		if(this.EssentialsXXXconfig.getConfig().getConfigurationSection("config.groups") != null) {
-			
-			for(String group : EssentialsXXXconfig.getConfig().getConfigurationSection("config.groups").getKeys(false)) {
-				
-				Map<String,String> tmp = new LinkedHashMap<String, String>();
-				boolean pex = false;
-				
-				for(String index : EssentialsXXXconfig.getConfig().getConfigurationSection("config.groups." + group).getKeys(false)) {
-					
-					if(index.equals("pex")) {
-					pex = true;
-					}
-					
-					tmp.put(index, EssentialsXXXconfig.getConfig().getString("config.groups." + group + "." + index));
-					
-				}
-				
-				
-				if(pex == false) {
-					try {
-						throw new NoPexException(prefix + " error in group " + group + " no pex! couldnt register group");
-					}catch(NoPexException ex) {
-						ex.printStackTrace();
-					}
-				}else {
-					
-					System.out.println(prefix + " add group " + group);
-					
-					this.EssentialsXXXgroups.put(group, tmp);	
-				}
-			}
-			
-			
-		}else {
-			System.out.println(prefix + " no groups in config");
-			//keine groups
-		}
-		
-		
-		//load player
-		this.EssentialsXXXplayer = new LinkedHashMap<>();
-		
-		if(EssentialsXXXconfig.getConfig().getConfigurationSection("config.player") != null) {
-			
-			
-			for(String player : EssentialsXXXconfig.getConfig().getConfigurationSection("config.player").getKeys(false)) {
-				
-				try {
-					UUID uuid = UUID.fromString(player);
-					
-					Map<String,String> tmp = new LinkedHashMap<String,String>();
-					
-					for(String index : EssentialsXXXconfig.getConfig().getConfigurationSection("config.player." + player).getKeys(false)) {
-						
-							
-						tmp.put(index, EssentialsXXXconfig.getConfig().getString("config.player." + player + "." + index));
-						
-					}
-					
-					
-					System.out.println(prefix + "load player " + player);
-					
-					this.EssentialsXXXplayer.put(uuid, tmp);
-					
-				}catch(Exception ex) {
-					System.out.println(prefix + " couldnt load player " + player);
-				}
-				
-				
-			}
-			
-			
-			
-		}else {//no player
-			System.out.println(prefix + " no player");
-		}
-		
-		//load error messages
-		this.EssentialsXXXnotaplayer = EssentialsXXXconfig.getConfig().getString("config.message.error.notaplayer");
-		this.EssentialsXXXnotonline = EssentialsXXXconfig.getConfig().getString("config.message.error.notonline");
-		this.EssentialsXXXsyntax = EssentialsXXXconfig.getConfig().getString("config.message.error.syntax");
-		this.EssentialsXXXnopex = EssentialsXXXconfig.getConfig().getString("config.message.error.nopex");
-	}
-	
+    
 	/*
 	 * getter
 	 */
@@ -289,16 +201,11 @@ public class EssentialsXXX extends JavaPlugin implements Listener, IdExcecutor{
 	public String getPluginName() {
 		return name;
 	}
-	
-	
-	public Map<String, Map<String, String>> getEssentialsXXXgroups() {
-		return EssentialsXXXgroups;
-	}
-	public Map<UUID, Map<String, String>> getEssentialsXXXplayer() {
-		return EssentialsXXXplayer;
-	}
 	public MySql getIdmysql() {
 		return idmysql;
+	}
+	public DataManager getManager() {
+		return manager;
 	}
 	
 	

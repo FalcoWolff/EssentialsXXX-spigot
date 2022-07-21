@@ -10,6 +10,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import de.falco.essentialsxxx.EssentialsXXX;
+import de.falco.essentialsxxx.data.datatypes.DataGroup;
 import de.falco.essentialsxxx.id.IdExcecutor;
 import de.falco.essentialsxxx.id.NotregisteredException;
 import de.falco.essentialsxxx.id.UserProfile;
@@ -69,16 +70,20 @@ public interface DataExcecutor extends IdExcecutor{
 	 * @param uuid
 	 * @param pname
 	 * @return list with keys and values. When player didn't join there will be only one pair key: "player" value: pname
-	 */
+	 */ 
 	default Map<String,String> getData(UUID uuid, String pname) {
 		
 		EssentialsXXX main = EssentialsXXX.getEssentialsXXXmain();
+		
+		DataManager manager = main.getManager();
 		
 		Player p = Bukkit.getPlayer(uuid);
 		
 		OfflinePlayer offline = Bukkit.getOfflinePlayer(uuid);
 		
-		Map<String,String> data = DataManager.sendDataRequest(uuid);
+		DataRequestEvent event = new DataRequestEvent(uuid, pname);
+		
+		Map<String,String> data = DataListenerManager.sendDataRequest(event);
 		
 		
 		
@@ -109,14 +114,14 @@ public interface DataExcecutor extends IdExcecutor{
 		
 		
 		//check the player section before the group section
-		for(UUID playername : main.getEssentialsXXXplayer().keySet()) {
+		for(UUID playername : manager.getPlayers().keySet()) {
 			
 			if(!uuid.equals(playername)) {
 				continue;
 			}
 			
 			
-			Map<String,String> d = main.getEssentialsXXXplayer().get(playername);
+			Map<String,String> d = manager.getPlayer(playername).getFields();
 			
 			for(String tmp : d.keySet()) {
 				data.put(tmp, d.get(tmp));
@@ -127,16 +132,17 @@ public interface DataExcecutor extends IdExcecutor{
 		}
 		
 		//group section
-		for(String groupname : main.getEssentialsXXXgroups().keySet()) {
+		for(String groupname : manager.getGroups().keySet()) {
 			
+			DataGroup datagroup = manager.getGroup(groupname);
 			
-			String pexG = main.getEssentialsXXXgroups().get(groupname).get("pex");
+			String pexG = datagroup.getPex();
 			
 			if(offline == null) {
 				
 				if(pexG.equals("")) {
 					
-					Map<String,String> d = main.getEssentialsXXXgroups().get(groupname);
+					Map<String,String> d = datagroup.getFields();
 					
 					for(String tmp : d.keySet()) {
 						data.put(tmp, d.get(tmp));
@@ -153,7 +159,7 @@ public interface DataExcecutor extends IdExcecutor{
 					continue;
 				}
 				
-				Map<String,String> d = main.getEssentialsXXXgroups().get(groupname);
+				Map<String,String> d = datagroup.getFields();
 				
 				for(String tmp : d.keySet()) {
 					data.put(tmp, d.get(tmp));
@@ -168,7 +174,7 @@ public interface DataExcecutor extends IdExcecutor{
 				
 				if(test == true) {
 					
-					Map<String,String> d = main.getEssentialsXXXgroups().get(groupname);
+					Map<String,String> d = datagroup.getFields();
 					
 					for(String tmp : d.keySet()) {
 						data.put(tmp, d.get(tmp));
@@ -188,8 +194,6 @@ public interface DataExcecutor extends IdExcecutor{
 		
 		return data;
 		
-		//couldnt find a layout for the player
-		//throw new NoLayoutFound("[" + main.getPluginName() + "] no layout found for player with uuid '" + uuid.toString() + "'");
 	}
 	
 	
